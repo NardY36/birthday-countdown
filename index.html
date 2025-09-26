@@ -31,10 +31,26 @@
 
     @keyframes fadeIn { from{opacity:0;transform:scale(0.8);} to{opacity:1;transform:scale(1);} }
 
-    ul#adore-list { display: block; margin-top: 20px; text-align: left; max-width: 600px; background: rgba(255,0,0,0.2); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(255,0,0,0.6); font-size: 1.2rem; color: white; overflow: hidden; }
-    ul#adore-list li { margin: 8px 0; opacity: 0; transform: translateX(-50px) translateY(-50px) rotate(-20deg); animation: shootingStar 0.5s forwards; }
+    ul#adore-list {
+      display: block;
+      margin-top: 20px;
+      text-align: left;
+      max-width: 600px;
+      background: rgba(255,0,0,0.2);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(255,0,0,0.6);
+      font-size: 1.2rem;
+      color: white;
+      overflow: hidden;
+      position: relative;
+    }
 
-    @keyframes shootingStar { to{opacity:1; transform:translateX(0) translateY(0) rotate(0deg);} }
+    ul#adore-list li {
+      margin: 8px 0;
+      opacity: 0;
+      position: relative;
+    }
 
     .streak {
       position: absolute;
@@ -43,6 +59,15 @@
       background: linear-gradient(to right, #FFFF00, transparent);
       opacity: 0.6;
       top: -120px;
+    }
+
+    .shooting-star {
+      position: absolute;
+      font-weight: bold;
+      color: #FFD700;
+      text-shadow: 1px 1px 6px rgba(255,255,0,0.8);
+      opacity: 0;
+      transform: translateX(-100vw);
     }
   </style>
 </head>
@@ -86,36 +111,56 @@
     const message = document.getElementById('message');
     const countdownEl = document.getElementById('countdown');
 
-    // Countdown to midnight Ethiopian time (UTC+3)
+    // Whoosh sound effect
+    const whoosh = new Audio('https://actions.google.com/sounds/v1/foley/fast_swoosh.ogg');
+
+    const targetDate = new Date('2025-09-27T00:00:00+03:00').getTime();
+
     function updateCountdown() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth();
-      const day = now.getDate();
-      const midnight = new Date(year, month, day + 1, 0, 0, 0);
-      const utcOffset = 3; // Ethiopia UTC+3
-      const localOffset = now.getTimezoneOffset() / 60;
-      const diff = midnight.getTime() + (utcOffset - localOffset) * 3600000 - now.getTime();
+      const now = new Date().getTime();
+      const diff = targetDate - now;
 
       if (diff <= 0) {
         countdownEl.textContent = "It's Midnight!";
         message.textContent = "Happy 26th Birthday, Baby! Celebrating you every day!";
         triggerMidnightEffects();
       } else {
-        const hours = Math.floor(diff / 3600000);
-        const minutes = Math.floor((diff % 3600000) / 60000);
-        const seconds = Math.floor((diff % 60000) / 1000);
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         countdownEl.textContent = `${hours}h ${minutes}m ${seconds}s until your birthday!`;
       }
     }
     setInterval(updateCountdown, 1000);
 
-    function showAdoreList() {
-      adoreThings.forEach((thing, index) => {
-        const li = document.createElement('li');
-        li.textContent = `${index + 1}. ${thing}`;
-        li.style.animationDelay = `${index * 0.3}s`;
-        adoreList.appendChild(li);
+    function triggerMidnightEffects() {
+      startConfetti();
+      createFlashStreaks();
+      showAdoreLines();
+    }
+
+    function showAdoreLines() {
+      adoreThings.forEach((text, index) => {
+        const star = document.createElement('div');
+        star.className = 'shooting-star';
+        star.textContent = `${index + 1}. ${text}`;
+        document.body.appendChild(star);
+
+        setTimeout(() => {
+          // Play whoosh sound
+          whoosh.currentTime = 0;
+          whoosh.play();
+
+          star.style.transition = `transform 1s ease-out, opacity 1s`;
+          star.style.transform = `translateX(0) translateY(${index*25}px)`; 
+          star.style.opacity = 1;
+
+          setTimeout(() => {
+            adoreList.appendChild(star);
+            star.style.position = 'static';
+            star.style.transform = 'none';
+          }, 1000);
+        }, index * 300);
       });
     }
 
@@ -140,7 +185,6 @@
     style.innerHTML = `@keyframes fall{to{transform:translateY(${window.innerHeight}px) rotate(720deg);opacity:0;}}`;
     document.head.appendChild(style);
 
-    // Dynamic Flash streaks
     function createFlashStreaks() {
       const streakCount = 30;
       function generateStreak() {
@@ -167,14 +211,12 @@
       for (let i = 0; i < streakCount; i++) {
         setTimeout(generateStreak, i * 100);
       }
-    }
 
-    function triggerMidnightEffects() {
-      startConfetti();
-      createFlashStreaks();
-      showAdoreList();
+      let streakInterval = setInterval(() => {
+        for (let i = 0; i < 5; i++) generateStreak();
+      }, 200);
+      setTimeout(() => clearInterval(streakInterval), 15000);
     }
-
   </script>
 </body>
 </html>
