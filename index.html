@@ -3,36 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Birthday Countdown</title>
+  <title>Countdown to Celebrate BK ❤️</title>
   <style>
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
       font-family: 'Poppins', sans-serif;
       text-align: center;
-      overflow: hidden;
       color: #FFD700;
       text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
       background: radial-gradient(circle at center, #ff0000, #000000);
       position: relative;
+      padding: 20px;
     }
 
-    h1 { font-size: 2.8rem; margin-bottom: 10px; animation: flashGlow 2s infinite; color: #FFD700; }
-    #countdown { font-size: 2rem; margin-bottom: 20px; }
-    #message { display: block; font-size: 2rem; margin-top: 20px; animation: fadeIn 2s ease-in forwards; }
+    h1 { font-size: 2rem; margin-bottom: 10px; animation: flashGlow 2s infinite; }
+    #countdown { font-size: 1.5rem; margin-bottom: 20px; }
+    #message { display: block; font-size: 1.3rem; margin: 20px 0; animation: fadeIn 2s ease-in forwards; }
 
     @keyframes flashGlow { 
       0%,100%{text-shadow:0 0 10px #FFD700,0 0 20px #FF0000,0 0 30px #FFD700;} 
       50%{text-shadow:0 0 20px #FF0000,0 0 40px #FFD700,0 0 60px #FF0000;} 
     }
 
-    @keyframes fadeIn { from{opacity:0;transform:scale(0.8);} to{opacity:1;transform:scale(1);} }
+    @keyframes fadeIn { from{opacity:0;transform:scale(0.95);} to{opacity:1;transform:scale(1);} }
 
     ul#adore-list {
-      display: block;
+      display: none;
       margin-top: 20px;
       text-align: left;
       max-width: 600px;
@@ -40,34 +40,19 @@
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(255,0,0,0.6);
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: white;
-      overflow: hidden;
-      position: relative;
+      line-height: 1.5;
     }
 
-    ul#adore-list li {
-      margin: 8px 0;
-      opacity: 0;
-      position: relative;
-    }
+    ul#adore-list li { margin-bottom: 10px; }
 
-    .streak {
-      position: absolute;
-      width: 2px;
-      height: 100px;
-      background: linear-gradient(to right, #FFFF00, transparent);
-      opacity: 0.6;
-      top: -120px;
-    }
-
-    .shooting-star {
-      position: absolute;
-      font-weight: bold;
-      color: #FFD700;
-      text-shadow: 1px 1px 6px rgba(255,255,0,0.8);
-      opacity: 0;
-      transform: translateX(-100vw);
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.6rem; }
+      #countdown { font-size: 1.2rem; }
+      #message { font-size: 1.1rem; }
+      ul#adore-list { font-size: 0.95rem; padding: 15px; }
     }
   </style>
 </head>
@@ -111,9 +96,6 @@
     const message = document.getElementById('message');
     const countdownEl = document.getElementById('countdown');
 
-    // Whoosh sound effect
-    const whoosh = new Audio('https://actions.google.com/sounds/v1/foley/fast_swoosh.ogg');
-
     const targetDate = new Date('2025-09-27T00:00:00+03:00').getTime();
 
     function updateCountdown() {
@@ -136,40 +118,18 @@
     function triggerMidnightEffects() {
       startConfetti();
       createFlashStreaks();
-      showAdoreLines();
-    }
 
-    function showAdoreLines() {
-      adoreThings.forEach((text, index) => {
-        const star = document.createElement('div');
-        star.className = 'shooting-star';
-        star.textContent = `${index + 1}. ${text}`;
-        document.body.appendChild(star);
-
-        setTimeout(() => {
-          // Play whoosh sound
-          whoosh.currentTime = 0;
-          whoosh.play();
-
-          star.style.transition = `transform 1s ease-out, opacity 1s`;
-          star.style.transform = `translateX(0) translateY(${index*25}px)`; 
-          star.style.opacity = 1;
-
-          setTimeout(() => {
-            adoreList.appendChild(star);
-            star.style.position = 'static';
-            star.style.transform = 'none';
-          }, 1000);
-        }, index * 300);
-      });
+      // Show list all at once
+      adoreList.innerHTML = adoreThings.map((t, i) => `<li>${i+1}. ${t}</li>`).join('');
+      adoreList.style.display = 'block';
     }
 
     function startConfetti() {
       for (let i = 0; i < 150; i++) {
         const confetti = document.createElement('div');
         confetti.style.position = 'absolute';
-        confetti.style.width = '10px';
-        confetti.style.height = '10px';
+        confetti.style.width = '8px';
+        confetti.style.height = '8px';
         confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
         confetti.style.top='-10px';
         confetti.style.left=Math.random()*window.innerWidth+'px';
@@ -189,7 +149,7 @@
       const streakCount = 30;
       function generateStreak() {
         const streak = document.createElement('div');
-        streak.className = 'streak';
+        streak.style.position = 'absolute';
         streak.style.width = Math.random() * 4 + 2 + 'px';
         streak.style.height = Math.random() * 100 + 50 + 'px';
         streak.style.top = Math.random() * window.innerHeight + 'px';
@@ -215,7 +175,7 @@
       let streakInterval = setInterval(() => {
         for (let i = 0; i < 5; i++) generateStreak();
       }, 200);
-      setTimeout(() => clearInterval(streakInterval), 15000);
+      setTimeout(() => clearInterval(streakInterval), 10000);
     }
   </script>
 </body>
