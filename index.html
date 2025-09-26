@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Countdown</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      overflow: hidden;
+      color: #FFD700;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+      background: radial-gradient(circle at center, #ff0000, #000000);
+      position: relative;
+    }
+
+    h1 { font-size: 2.8rem; margin-bottom: 10px; animation: flashGlow 2s infinite; color: #FFD700; }
+    #countdown { font-size: 2rem; margin-bottom: 20px; }
+    #message { display: block; font-size: 2rem; margin-top: 20px; animation: fadeIn 2s ease-in forwards; }
+
+    @keyframes flashGlow { 
+      0%,100%{text-shadow:0 0 10px #FFD700,0 0 20px #FF0000,0 0 30px #FFD700;} 
+      50%{text-shadow:0 0 20px #FF0000,0 0 40px #FFD700,0 0 60px #FF0000;} 
+    }
+
+    @keyframes fadeIn { from{opacity:0;transform:scale(0.8);} to{opacity:1;transform:scale(1);} }
+
+    ul#adore-list { display: block; margin-top: 20px; text-align: left; max-width: 600px; background: rgba(255,0,0,0.2); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(255,0,0,0.6); font-size: 1.2rem; color: white; overflow: hidden; }
+    ul#adore-list li { margin: 8px 0; opacity: 0; transform: translateX(-50px) translateY(-50px) rotate(-20deg); animation: shootingStar 0.5s forwards; }
+
+    @keyframes shootingStar { to{opacity:1; transform:translateX(0) translateY(0) rotate(0deg);} }
+
+    .streak {
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(to right, #FFFF00, transparent);
+      opacity: 0.6;
+      top: -120px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Countdown to Celebrate BK ❤️</h1>
+  <div id="countdown">Loading...</div>
+  <div id="message"></div>
+  <ul id="adore-list"></ul>
+
+  <script>
+    const adoreThings = [
+      "You are the blessing I was afraid to ask for but truly needed",
+      "Lighting up my day faster than The Flash",
+      "Making ordinary moments unforgettable",
+      "Making me laugh harder than Deadpool’s jokes",
+      "Kindness even Captain America would be proud of",
+      "The safety of your arms, my very own Iron Man",
+      "Patience, stronger than Hulk",
+      "The way you look at me - pure magic, Doctor Strange style",
+      "A love as epic as Spider-Man & MJ",
+      "Full of surprises like Loki’s tricks, but always sweeter",
+      "Creativity, straight out of Tony Stark’s lab",
+      "Cheering me up, faster than Quicksilver’s dash",
+      "Thor worthy courage",
+      "Always supporting me like Falcon’s steady wings",
+      "Hugs better than Groot saying 'I am Groot'",
+      "A life full of epic adventures",
+      "Goofy and making every moment memorable",
+      "The way you remember little details, like Hawkeye never misses",
+      "Warmth as lovely as Aunt May",
+      "Always steady, like the Avengers assemble",
+      "Kisses more vibrant than Vibranium",
+      "Soul brighter than Stark Tower at night",
+      "My shield against everything, Captain-style",
+      "A presence so contagious",
+      "Your love is the Infinity Stone I’ll treasure forever",
+      "Most of all, how you make me feel like the luckiest person alive"
+    ];
+
+    const adoreList = document.getElementById('adore-list');
+    const message = document.getElementById('message');
+    const countdownEl = document.getElementById('countdown');
+
+    // Countdown to midnight Ethiopian time (UTC+3)
+    function updateCountdown() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const day = now.getDate();
+      const midnight = new Date(year, month, day + 1, 0, 0, 0);
+      const utcOffset = 3; // Ethiopia UTC+3
+      const localOffset = now.getTimezoneOffset() / 60;
+      const diff = midnight.getTime() + (utcOffset - localOffset) * 3600000 - now.getTime();
+
+      if (diff <= 0) {
+        countdownEl.textContent = "It's Midnight!";
+        message.textContent = "Happy 26th Birthday, Baby! Celebrating you every day!";
+        triggerMidnightEffects();
+      } else {
+        const hours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        countdownEl.textContent = `${hours}h ${minutes}m ${seconds}s until your birthday!`;
+      }
+    }
+    setInterval(updateCountdown, 1000);
+
+    function showAdoreList() {
+      adoreThings.forEach((thing, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${index + 1}. ${thing}`;
+        li.style.animationDelay = `${index * 0.3}s`;
+        adoreList.appendChild(li);
+      });
+    }
+
+    function startConfetti() {
+      for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'absolute';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
+        confetti.style.top='-10px';
+        confetti.style.left=Math.random()*window.innerWidth+'px';
+        confetti.style.opacity=Math.random();
+        confetti.style.transform=`rotate(${Math.random()*360}deg)`;
+        confetti.style.animation=`fall ${3+Math.random()*5}s linear forwards`;
+        document.body.appendChild(confetti);
+        setTimeout(()=>confetti.remove(),8000);
+      }
+    }
+
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes fall{to{transform:translateY(${window.innerHeight}px) rotate(720deg);opacity:0;}}`;
+    document.head.appendChild(style);
+
+    // Dynamic Flash streaks
+    function createFlashStreaks() {
+      const streakCount = 30;
+      function generateStreak() {
+        const streak = document.createElement('div');
+        streak.className = 'streak';
+        streak.style.width = Math.random() * 4 + 2 + 'px';
+        streak.style.height = Math.random() * 100 + 50 + 'px';
+        streak.style.top = Math.random() * window.innerHeight + 'px';
+        streak.style.left = '-100px';
+        streak.style.background = 'linear-gradient(to right, #FFFF00, transparent)';
+        streak.style.opacity = 0.8;
+        streak.style.transform = `rotate(${Math.random() * 45 - 22}deg)`;
+        streak.style.transition = 'transform 0.5s linear, opacity 0.5s linear';
+        document.body.appendChild(streak);
+
+        setTimeout(() => {
+          streak.style.transform = `translateX(${window.innerWidth + 200}px) rotate(${Math.random() * 45 - 22}deg)`;
+          streak.style.opacity = 0;
+        }, 50);
+
+        setTimeout(() => streak.remove(), 600);
+      }
+
+      for (let i = 0; i < streakCount; i++) {
+        setTimeout(generateStreak, i * 100);
+      }
+    }
+
+    function triggerMidnightEffects() {
+      startConfetti();
+      createFlashStreaks();
+      showAdoreList();
+    }
+
+  </script>
+</body>
+</html>
